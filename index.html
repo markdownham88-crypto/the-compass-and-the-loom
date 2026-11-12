@@ -1240,6 +1240,27 @@ figure.fig svg.gfocus :is(circle,ellipse,rect,polygon,line,path,polyline,text):n
 .ec-ctx p{font:400 .95rem/1.55 var(--serif);color:var(--nv-soft);margin:0 0 .35rem}
 .ec-ctx mark{background:var(--nv-mark);color:inherit;border-radius:3px}
 .ec-ctx a{font:600 .74rem var(--sans);color:var(--nv-acc);text-decoration:none}
+/* figure tools: tour bar, all-connections, zoom */
+.g-tour{margin:.6rem .4rem 0;border:1px solid #24407a;border-left:3px solid #e8b75c;border-radius:10px;background:rgba(6,18,42,.85);padding:.6rem .8rem;font-family:var(--sans);color:#e9eefb}
+.g-tour .gt-h{display:flex;gap:.6rem;align-items:baseline}
+.g-tour .gt-n{font:600 .68rem var(--sans);color:#e8b75c;letter-spacing:.08em;white-space:nowrap}
+.g-tour .gt-t{font:600 .92rem var(--sans)}
+.g-tour .gt-d{margin:.3rem 0 .5rem;font:400 .92rem/1.5 var(--serif);color:#c4cfe9;min-height:2.8em}
+.g-tour .gt-c{display:flex;gap:.35rem;flex-wrap:wrap}
+.g-tour button{font:500 .76rem var(--sans);background:#0e2350;border:1px solid #24407a;color:#e9eefb;border-radius:999px;padding:.25rem .7rem;cursor:pointer;min-width:2rem}
+.g-tour button:hover{border-color:#e8b75c;color:#e8b75c}
+.g-tour .gt-p{height:3px;background:#24407a;border-radius:3px;margin-top:.55rem;overflow:hidden}
+.g-tour .gt-p i{display:block;height:100%;width:0;background:#e8b75c;transition:width .4s}
+figure.fig svg.gall .g-vline.g-faint{opacity:.55!important;stroke-width:1.2}
+figure.fig svg.gall :is(circle,ellipse,rect,polygon,line,path,polyline,text):not(.g-on):not([fill^="url"]):not(.dg-rose *){opacity:.55!important}
+figure.fig.zoomin svg{cursor:grab;touch-action:none}
+figure.fig.zoomin svg:active{cursor:grabbing}
+figure.fig svg:focus-visible{outline:2px solid #e8b75c;outline-offset:3px;border-radius:6px}
+.fig-tools button[aria-pressed="true"]{background:#e8b75c!important;color:#0a1b3d!important;border-color:#e8b75c!important}
+figure.fig .plate{flex-wrap:wrap;row-gap:.55rem}
+figure.fig .plate .fig-tools{order:3;flex:1 1 100%;margin-left:0;display:flex;flex-wrap:wrap;gap:.35rem}
+figure.fig .plate .fig-tools button{white-space:nowrap}
+figure.fig .plate .fig-expand{margin-left:auto}
 
 </style>
 <style id="light-theme">
@@ -10129,6 +10150,7 @@ A complete companion edition</p>
 <p><strong>Editio quarta, fifth impression (12 November 2026).</strong> The graph layer now infers relations where no line is drawn: containment, shared terms, colour family, row and column alignment, and labels along a plotted curve. Each is drawn as a dashed arc of its own colour and named, so that every element in all seventy-three figures has relations to trace. Movement 40, on the diagram as instrument (Peirce, Bertin, the Gestalt principles, Tufte, Latour, Drucker, Kitchin and Dodge), turns the treatise's method on its own figures and adds a live atlas of the volume, built from its loom notes. Nothing has been removed.</p>
 <p><strong>Editio quarta, sixth impression (12 November 2026).</strong> A reader’s apparatus for the whole volume: a navigator with a live contents tree of all three books, figure, table and card indexes, scrollspy, a breadcrumb in the top bar, bookmarks and resume-reading; full-text search across every paragraph, heading, explainer card, figure, table, glossary entry and woven note, with filters, phrase and exclusion syntax, spelling suggestions and a results bar for stepping through matches; keyboard shortcuts; a light reading mode alongside the original deep-blue one, with figures kept as dark plates; three reading paths in the Contents; a bridge into the Coda; sixty-eight new explainer cards (595 in all), including the previously empty Liber Secundus Sources deck; and forensic fixes to several interactive widgets whose variables collided (the Turing estimate, the Zone crossing and the gathering classifier among them), a doubled word, and the last sepia colours in the Pyxis Incerta codex. Nothing has been removed.</p>
 <p><strong>Editio quarta, seventh impression (12 November 2026).</strong> Every part of every diagram now opens a reversible explainer card. The front gives the element, its meaning, the passage where the text discusses it, the ideas it links to, and its relations within the figure; the back gives the full explainer: what it means, how it connects (each relation clickable, moving the card and the highlight together), every place the text discusses it with a link to go there, the explainer cards and figures on the same idea, and the glossary. Key terms throughout the prose (the glossary and the deck-card titles, about five hundred in all) are now linked to the same cards, as are the glossary entries and all 595 deck cards, each of which gains a “Full explainer” button. Panels of listed rules now resolve to the single rule under the cursor; the hover fade is lighter; and the relations key no longer covers the caption. Nothing has been removed.</p>
+<p><strong>Editio quarta, eighth impression (12 November 2026).</strong> A diagnostic pass over all seventy-three figures, testing each with a pointer, by touch and inside a sandboxed frame. Every figure now carries four working instruments: a <em>Tour</em> that steps through each element in reading order with its meaning and connections; <em>Connections</em>, which shows every drawn and inferred relation at once; <em>Zoom</em>, which zooms and pans inside the figure by wheel, pinch, drag or double-click; and a reversible <em>Figure card</em> listing every element, the annotated hotspots and the passages that cite the figure. The old Spotlight and Zoom toggles, which did nothing visible, are gone. Diagrams can be explored from the keyboard; the decorative tilt, which shifted targets under the pointer, has been removed; and elements with no annotation now open on the passage that discusses them rather than on a generic line. Nothing has been removed from the text.</p>
 <p class="foot">© 2026 Mark Downham · Principia Humanitatis · London</p>
 </div></section>
 
@@ -10508,7 +10530,7 @@ function txt(svg,x,y,s,col,anc,fs){var t=el('text',{x:x,y:y,fill:col||'#c4cfe9',
 /* ---------- Diagram build-in stagger and tilt ---------- */
 (function(){var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;if(reduce||!('IntersectionObserver' in window))return;
  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;io.unobserve(e.target);var sv=e.target;var items=Array.prototype.slice.call(sv.querySelectorAll(':scope > text, :scope > g > text'));items.forEach(function(t,i){t.style.opacity='0';t.style.transition='opacity .5s ease '+(0.15+i*0.025).toFixed(3)+'s';requestAnimationFrame(function(){requestAnimationFrame(function(){t.style.opacity='';});});});});},{rootMargin:'0px 0px -10% 0px'});
- Array.prototype.forEach.call(document.querySelectorAll('figure.fig svg'),function(sv){io.observe(sv);var fig=sv.closest('figure');var box=sv.parentNode;sv.style.transition='transform .35s ease';sv.addEventListener('mousemove',function(ev){if(fig.classList.contains('notilt'))return;var r=sv.getBoundingClientRect();var x=(ev.clientX-r.left)/r.width-.5,y=(ev.clientY-r.top)/r.height-.5;sv.style.transform='perspective(1400px) rotateY('+(x*3.2).toFixed(2)+'deg) rotateX('+(-y*3.2).toFixed(2)+'deg)';});sv.addEventListener('mouseleave',function(){sv.style.transform='';});});
+ Array.prototype.forEach.call(document.querySelectorAll('figure.fig svg'),function(sv){io.observe(sv);var fig=sv.closest('figure');var box=sv.parentNode;sv.style.transition='transform .35s ease';sv.addEventListener('mousemove',function(ev){if(true)return;var r=sv.getBoundingClientRect();var x=(ev.clientX-r.left)/r.width-.5,y=(ev.clientY-r.top)/r.height-.5;sv.style.transform='perspective(1400px) rotateY('+(x*3.2).toFixed(2)+'deg) rotateX('+(-y*3.2).toFixed(2)+'deg)';});sv.addEventListener('mouseleave',function(){sv.style.transform='';});});
 })();
 
 
@@ -10551,19 +10573,23 @@ function txt(svg,x,y,s,col,anc,fs){var t=el('text',{x:x,y:y,fill:col||'#c4cfe9',
   curves.forEach(function(cv){var L=cv.getTotalLength(),pts=[];for(var q=0;q<=30;q++)pts.push(cv.getPointAtLength(L*q/30));var rel=[];texts.forEach(function(t){try{var b=t.getBBox(),c={x:b.x+b.width/2,y:b.y+b.height/2};if(pts.some(function(p){return Math.abs(p.x-c.x)<b.width/2+18&&Math.abs(p.y-c.y)<24;}))rel.push(t);}catch(x){}});
    cv.classList.add('g-node','g-curve');cv.style.pointerEvents='stroke';
    cv.addEventListener('mouseenter',function(){if(pinned)return;sv.classList.add('gfocus');cv.classList.add('g-on','g-core');rel.forEach(function(t){t.classList.add('g-on');});var relS=rel.slice().sort(function(p,q){return (q.textContent.match(/[A-Za-z]/g)||[]).length-(p.textContent.match(/[A-Za-z]/g)||[]).length;});tip.innerHTML='<b>'+(relS[0]?relS[0].textContent.trim():'curve')+'</b><span>a plotted relation'+(rel.length?' · labels along it: '+relS.slice(0,5).map(function(t){return t.textContent.trim();}).join(' · '):'')+'</span><em>click for the full explainer card ↻</em>';var r=sv.getBoundingClientRect(),br=box.getBoundingClientRect();tip.style.left='12px';tip.style.top=(r.top-br.top+10)+'px';tip.classList.add('show');});
-   cv.addEventListener('mouseleave',function(){if(!pinned)off();});});
+   cv.addEventListener('mouseleave',function(){if(!pinned){off();if(sv.__rest)try{sv.__rest();}catch(x){}}});});
   var fig=sv.closest('figure'),box=sv.parentNode;if(getComputedStyle(box).position==='static')box.style.position='relative';
   var tip=document.createElement('div');tip.className='g-tip';box.appendChild(tip);var lg=document.createElement('div');lg.className='g-legend';lg.innerHTML='<i style="color:#5fd0c6">━</i>drawn <i style="color:#a79bff">┄</i>inside <i style="color:#e8b75c">┄</i>shared term <i style="color:#5fd0c6">┄</i>colour <i style="color:#7fb4ff">┄</i>row/column';box.appendChild(lg);var pinned=null;
   function label(n){return n.texts.map(function(t){return t.textContent.trim();}).filter(Boolean).join(' · ')||'unlabelled node';}
   function on(n){sv.classList.add('gfocus');var set=[n].concat(n.nb);set.forEach(function(m){m.el.classList.add('g-on');m.texts.forEach(function(t){t.classList.add('g-on');});});n.el.classList.add('g-core');n.edges.forEach(function(ed){ed.el.classList.add('g-on');if(ed.pulse)ed.pulse.classList.add('g-on','g-fast');});vg.innerHTML='';var c0=ctr(n);n.vl.forEach(function(v){v.n.el.classList.add('g-on');v.n.texts.forEach(function(t){t.classList.add('g-on');});var c1=ctr(v.n);var ln=document.createElementNS('http://www.w3.org/2000/svg','path');var mx=(c0.x+c1.x)/2,my=(c0.y+c1.y)/2-Math.min(60,Math.abs(c1.x-c0.x)*0.18);ln.setAttribute('d','M'+c0.x+' '+c0.y+' Q'+mx+' '+my+' '+c1.x+' '+c1.y);ln.setAttribute('stroke',VC[v.ty]);ln.setAttribute('class','g-vline g-on');vg.appendChild(ln);var dt=document.createElementNS('http://www.w3.org/2000/svg','circle');dt.setAttribute('cx',c1.x);dt.setAttribute('cy',c1.y);dt.setAttribute('r',4);dt.setAttribute('fill',VC[v.ty]);dt.setAttribute('class','g-on');vg.appendChild(dt);});
    function first(m){var t=m.texts.map(function(t){return t.textContent.trim();}).filter(Boolean);return t[0]||'node';}var nb=n.nb.map(first).filter(function(x,i,a){return a.indexOf(x)===i;});var all=n.texts.map(function(t){return t.textContent.trim();}).filter(Boolean);tip.innerHTML='<b>'+(all[0]||'node')+'</b>'+(all.length>1?'<span class="g-sub">'+all.slice(1,4).join(' · ')+'</span>':'')+'<span>'+(n.edges.length?n.edges.length+' drawn connection'+(n.edges.length>1?'s':''):'')+(n.vl.length?(n.edges.length?' · ':'')+n.vl.length+' inferred relation'+(n.vl.length>1?'s':''):'')+(nb.length?' → '+nb.slice(0,6).join(' · '):'')+'</span>'+(n.vl.length?'<span class="g-rel">'+n.vl.slice(0,6).map(function(v){var l=v.n.texts[0]?v.n.texts[0].textContent.trim().slice(0,30):'element';return '<i style="color:'+VC[v.ty]+'">●</i> '+l+' <small>'+v.why+'</small>';}).join('<br>')+'</span>':'')+(pinned?'<em>pinned · click again to release</em>':'<em>click for the full explainer card ↻</em>');
    var r=sv.getBoundingClientRect(),br=box.getBoundingClientRect(),sx=r.width/vb[2],sy=r.height/vb[3];tip.style.left=Math.min(r.width-260,Math.max(4,(n.b.x-vb[0])*sx+(r.left-br.left)))+'px';tip.style.top=Math.max(4,(n.b.y+n.b.height-vb[1])*sy+(r.top-br.top)+8)+'px';tip.classList.add('show');}
-  function off(){vg.innerHTML='';sv.classList.remove('gfocus');Array.prototype.forEach.call(sv.querySelectorAll('.g-on,.g-core,.g-fast'),function(e){e.classList.remove('g-on','g-core','g-fast');});tip.classList.remove('show');}
-  live.forEach(function(n){var tg=[n.el].concat(n.free?[]:n.texts);tg.forEach(function(el0){el0.classList.add('g-node');el0.addEventListener('mouseenter',function(){if(!pinned)on(n);});el0.addEventListener('mouseleave',function(){if(!pinned)off();});if(!el0.classList.contains('hs'))el0.addEventListener('click',function(ev){ev.stopPropagation();openCard(n,false);});});});
+  function off(){vg.innerHTML='';sv.classList.remove('gfocus','gall');Array.prototype.forEach.call(sv.querySelectorAll('.g-on,.g-core,.g-fast'),function(e){e.classList.remove('g-on','g-core','g-fast');});tip.classList.remove('show');}
+  live.forEach(function(n){var tg=[n.el].concat(n.free?[]:n.texts);tg.forEach(function(el0){el0.classList.add('g-node');el0.addEventListener('mouseenter',function(){if(!pinned)on(n);});el0.addEventListener('mouseleave',function(){if(!pinned){off();if(sv.__rest)try{sv.__rest();}catch(x){}}});if(!el0.classList.contains('hs'))el0.addEventListener('click',function(ev){ev.stopPropagation();openCard(n,false);});});});
   var order=live.slice().sort(function(p,q){return (p.b.y-q.b.y)||(p.b.x-q.b.x);});
   function relOf(n){var r=[],seen=[];n.nb.forEach(function(m){if(m===n||seen.indexOf(m)>=0)return;seen.push(m);r.push({n:m,why:'drawn connection',ty:'drawn'});});n.vl.forEach(function(v){if(seen.indexOf(v.n)>=0)return;seen.push(v.n);r.push(v);});return r.filter(function(x){return live.indexOf(x.n)>=0;}).slice(0,10);}
   var API={fig:fig,list:order,label:function(n){return label(n);},rel:relOf,open:function(n,fl){openCard(n,fl);},onClose:function(){pinned=null;off();}};
   function openCard(n,fl){pinned=null;off();pinned=n;on(n);tip.classList.remove('show');if(window.__ecard)window.__ecard.node(API,n,fl);}
+  function showAll(){off();sv.classList.add('gfocus','gall');live.forEach(function(m){m.el.classList.add('g-on');m.texts.forEach(function(t){t.classList.add('g-on');});});edges.forEach(function(ed){ed.el.classList.add('g-on');if(ed.pulse)ed.pulse.classList.add('g-on');});
+   var done={};live.forEach(function(m){m.vl.slice(0,2).forEach(function(v){var a=live.indexOf(m),b=live.indexOf(v.n);if(b<0)return;var k=Math.min(a,b)+'-'+Math.max(a,b);if(done[k])return;done[k]=1;var c0=ctr(m),c1=ctr(v.n);var ln=document.createElementNS('http://www.w3.org/2000/svg','path');var mx=(c0.x+c1.x)/2,my=(c0.y+c1.y)/2-Math.min(60,Math.abs(c1.x-c0.x)*0.18);ln.setAttribute('d','M'+c0.x+' '+c0.y+' Q'+mx+' '+my+' '+c1.x+' '+c1.y);ln.setAttribute('stroke',VC[v.ty]);ln.setAttribute('class','g-vline g-on g-faint');vg.appendChild(ln);});});
+   return Object.keys(done).length;}
+  sv.__api={list:order,rel:relOf,label:label,on:function(n){pinned=null;off();on(n);tip.classList.remove('show');},off:function(){pinned=null;off();sv.classList.remove('gall');},open:openCard,all:showAll,fig:fig,edges:edges.length,ctr:ctr,vb:vb};
   sv.__openText=function(t){var n=null;live.forEach(function(m){if(!n&&(m.el===t||m.texts.indexOf(t)>=0))n=m;});if(n)openCard(n,false);return !!n;};
   sv.__graph={nodes:live.length,edges:edges.length,inferred:nodes.reduce(function(s,n){return s+n.vl.length;},0)};}
  window.__graphSetup=setup;
@@ -10602,6 +10628,56 @@ function txt(svg,x,y,s,col,anc,fs){var t=el('text',{x:x,y:y,fill:col||'#c4cfe9',
 /* toc + progress */
 var btn=document.getElementById('btnToc');if(btn)btn.addEventListener('click',function(){var c=document.getElementById('contents');if(c)c.scrollIntoView({behavior:'smooth'});});
 var prog=document.getElementById('prog'),tick=false;if(prog)window.addEventListener('scroll',function(){if(tick)return;tick=true;requestAnimationFrame(function(){var hh=document.documentElement;prog.style.width=((hh.scrollTop/((hh.scrollHeight-hh.clientHeight)||1))*100).toFixed(2)+'%';tick=false;});},{passive:true});
+
+/* ---------- Seventh impression II: figure tools that do things ---------- */
+(function(){
+ function ensure(sv){try{if(window.__graphSetup)window.__graphSetup(sv);}catch(e){}return sv.__api;}
+ function hotFor(fig,label){var D2={};try{D2=JSON.parse(document.getElementById('fig-hotspots').textContent);}catch(e){}var pt=fig.querySelector('.plate .pt');var spots=D2[pt?pt.textContent.trim():'']||[];var nl=label.toLowerCase(),best=null;spots.forEach(function(s){var m=(s.m||'').toLowerCase();if(!best&&m&&(nl.indexOf(m)>=0||(m.indexOf(nl)>=0&&nl.length>3)))best=s;});return best;}
+ Array.prototype.forEach.call(document.querySelectorAll('figure.fig'),function(fig){
+  var sv=fig.querySelector('svg'),tl=fig.querySelector('.fig-tools');if(!sv||!tl)return;
+  /* drop the old Spotlight/Zoom toggles: replaced below */
+  Array.prototype.forEach.call(tl.querySelectorAll('button'),function(b){var t=b.textContent.trim();if(t==='Spotlight'||t==='Zoom')b.remove();});
+  fig.classList.add('nospot');
+  function mk(lbl,title){var b=document.createElement('button');b.type='button';b.textContent=lbl;b.title=title;b.setAttribute('aria-pressed','false');tl.appendChild(b);return b;}
+  var bTour=mk('▶ Tour','Step through every element of this figure, with its connections'),bAll=mk('Connections','Show every relation in the figure at once'),bZoom=mk('Zoom','Zoom and pan inside the figure: scroll or pinch to zoom, drag to pan, double-click to zoom in'),bCard=mk('Figure card ↻','A reversible card for the whole figure: what it shows, every element, and where the text discusses it');
+  /* tour bar */
+  var bar=document.createElement('div');bar.className='g-tour';bar.hidden=true;bar.innerHTML='<div class="gt-h"><span class="gt-n"></span><b class="gt-t"></b></div><p class="gt-d"></p><div class="gt-c"><button type="button" data-a="prev" aria-label="Previous">‹</button><button type="button" data-a="play" aria-label="Pause">❚❚</button><button type="button" data-a="next" aria-label="Next">›</button><button type="button" data-a="card">Open its card ↻</button><button type="button" data-a="stop" aria-label="Stop the tour">✕</button></div><div class="gt-p"><i></i></div>';
+  var hint=fig.querySelector('.ec-hint')||fig.querySelector('.explorer')||fig.querySelector('figcaption');fig.insertBefore(bar,hint);
+  var ti=-1,timer=null,api=null;
+  function desc(n){var l=api.label(n);var h=hotFor(fig,l);var r=api.rel(n);var rs=r.slice(0,3).map(function(x){return api.label(x.n).split(' · ')[0].slice(0,40)+' ('+x.why+')';});return (h?h.d+' ':'')+(r.length?'Connected to '+rs.join('; ')+(r.length>3?' and '+(r.length-3)+' more':'')+'.':'Stands on its own in the figure.');}
+  function show(i){api=api||ensure(sv);if(!api||!api.list.length)return;ti=(i+api.list.length)%api.list.length;var n=api.list[ti];api.on(n);sv.__rest=function(){sv.__api.on(n);sv.__api&&0;};bar.querySelector('.gt-n').textContent=(ti+1)+' / '+api.list.length;bar.querySelector('.gt-t').textContent=api.label(n).slice(0,90);bar.querySelector('.gt-d').textContent=desc(n);bar.querySelector('.gt-p i').style.width=((ti+1)/api.list.length*100)+'%';
+   if(fig.classList.contains('zoomin')){var c=api.ctr(n),w=api.vb[2]*.55,hh=api.vb[3]*.55;animVB(sv,[c.x-w/2,c.y-hh/2,w,hh]);}}
+  function play(){clearInterval(timer);timer=setInterval(function(){show(ti+1);if(ti===api.list.length-1){clearInterval(timer);timer=null;bar.querySelector('[data-a=play]').textContent='▶';}},3600);bar.querySelector('[data-a=play]').textContent='❚❚';}
+  function stop(){clearInterval(timer);timer=null;bar.hidden=true;sv.__rest=null;bTour.setAttribute('aria-pressed','false');bTour.textContent='▶ Tour';if(api)api.off();if(sv.__vb0&&!fig.classList.contains('zoomin'))animVB(sv,sv.__vb0);}
+  bTour.addEventListener('click',function(ev){ev.stopPropagation();if(!bar.hidden){stop();return;}api=ensure(sv);if(!api)return;bAllOff();bar.hidden=false;bTour.setAttribute('aria-pressed','true');bTour.textContent='■ Stop tour';show(0);play();});
+  bar.addEventListener('click',function(ev){var b=ev.target.closest('button');if(!b)return;ev.stopPropagation();var a=b.getAttribute('data-a');if(a==='prev'){clearInterval(timer);timer=null;b.parentNode.querySelector('[data-a=play]').textContent='▶';show(ti-1);}else if(a==='next'){clearInterval(timer);timer=null;b.parentNode.querySelector('[data-a=play]').textContent='▶';show(ti+1);}else if(a==='play'){if(timer){clearInterval(timer);timer=null;b.textContent='▶';}else play();}else if(a==='card'){clearInterval(timer);timer=null;bar.querySelector('[data-a=play]').textContent='▶';api.open(api.list[ti],false);}else stop();});
+  /* all connections */
+  function bAllOff(){if(bAll.getAttribute('aria-pressed')==='true'){bAll.setAttribute('aria-pressed','false');sv.__rest=null;var a=ensure(sv);if(a)a.off();}}
+  bAll.addEventListener('click',function(ev){ev.stopPropagation();var a=ensure(sv);if(!a)return;if(bAll.getAttribute('aria-pressed')==='true'){bAllOff();return;}if(!bar.hidden)stop();var k=a.all();sv.__rest=function(){sv.__api.all();};bAll.setAttribute('aria-pressed','true');bAll.title=k+' inferred relations and '+a.edges+' drawn connections shown';});
+  sv.addEventListener('mouseenter',function(){if(bAll.getAttribute('aria-pressed')==='true'){var a=sv.__api;if(a){} }});
+  /* inline zoom & pan */
+  var drag=null;function vbOf(){return (sv.getAttribute('viewBox')||'0 0 900 500').split(/\s+/).map(Number);}
+  bZoom.addEventListener('click',function(ev){ev.stopPropagation();if(!sv.__vb0)sv.__vb0=vbOf();var on=!fig.classList.contains('zoomin');fig.classList.toggle('zoomin',on);bZoom.setAttribute('aria-pressed',on);bZoom.textContent=on?'Reset zoom':'Zoom';if(on){var v=sv.__vb0;animVB(sv,[v[0]+v[2]*.2,v[1]+v[3]*.2,v[2]*.6,v[3]*.6]);}else animVB(sv,sv.__vb0);});
+  function zoomAt(f,cx,cy){var v=vbOf(),v0=sv.__vb0||v;var nw=Math.min(v0[2],Math.max(v0[2]/6,v[2]*f)),nh=nw*v[3]/v[2];v[0]=cx-(cx-v[0])*nw/v[2];v[1]=cy-(cy-v[1])*nh/v[3];v[2]=nw;v[3]=nh;sv.setAttribute('viewBox',v.join(' '));}
+  function svPt(ev){var r=sv.getBoundingClientRect(),v=vbOf();return {x:v[0]+(ev.clientX-r.left)/r.width*v[2],y:v[1]+(ev.clientY-r.top)/r.height*v[3]};}
+  sv.addEventListener('wheel',function(ev){if(!fig.classList.contains('zoomin'))return;ev.preventDefault();var p=svPt(ev);zoomAt(ev.deltaY<0?0.86:1.16,p.x,p.y);},{passive:false});
+  sv.addEventListener('dblclick',function(ev){if(!sv.__vb0)sv.__vb0=vbOf();if(!fig.classList.contains('zoomin')){fig.classList.add('zoomin');bZoom.setAttribute('aria-pressed','true');bZoom.textContent='Reset zoom';}var p=svPt(ev);zoomAt(0.6,p.x,p.y);});
+  sv.addEventListener('pointerdown',function(ev){if(!fig.classList.contains('zoomin')||ev.button!==0)return;drag={x:ev.clientX,y:ev.clientY,v:vbOf(),moved:false};});
+  window.addEventListener('pointermove',function(ev){if(!drag)return;var dx=ev.clientX-drag.x,dy=ev.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>4)drag.moved=true;if(!drag.moved)return;var r=sv.getBoundingClientRect();sv.setAttribute('viewBox',[drag.v[0]-dx/r.width*drag.v[2],drag.v[1]-dy/r.height*drag.v[3],drag.v[2],drag.v[3]].join(' '));});
+  window.addEventListener('pointerup',function(){if(drag&&drag.moved){sv.__dragged=Date.now();}drag=null;});
+  sv.addEventListener('click',function(ev){if(sv.__dragged&&Date.now()-sv.__dragged<250){ev.stopPropagation();ev.preventDefault();}},true);
+  /* pinch */
+  var pin=null;sv.addEventListener('touchstart',function(ev){if(ev.touches.length===2&&fig.classList.contains('zoomin')){var a=ev.touches[0],b=ev.touches[1];pin={d:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)};}},{passive:true});
+  sv.addEventListener('touchmove',function(ev){if(!pin||ev.touches.length!==2)return;ev.preventDefault();var a=ev.touches[0],b=ev.touches[1],d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);var p=svPt({clientX:(a.clientX+b.clientX)/2,clientY:(a.clientY+b.clientY)/2});zoomAt(pin.d/d,p.x,p.y);pin.d=d;},{passive:false});
+  sv.addEventListener('touchend',function(){pin=null;});
+  /* figure card */
+  bCard.addEventListener('click',function(ev){ev.stopPropagation();var a=ensure(sv);if(a&&window.__ecard&&window.__ecard.figure)window.__ecard.figure(fig,a);});
+  /* keyboard: Tab into the diagram, arrows to move, Enter for the card */
+  sv.setAttribute('tabindex','0');sv.setAttribute('aria-label',(fig.querySelector('.plate .pt')||{textContent:'Figure'}).textContent.trim()+': interactive diagram. Use arrow keys to move between elements, Enter to open the explainer card.');
+  var ki=-1;sv.addEventListener('keydown',function(ev){var a=ensure(sv);if(!a||!a.list.length)return;if(ev.key==='ArrowRight'||ev.key==='ArrowDown'){ev.preventDefault();ki=(ki+1)%a.list.length;a.on(a.list[ki]);}else if(ev.key==='ArrowLeft'||ev.key==='ArrowUp'){ev.preventDefault();ki=(ki-1+a.list.length)%a.list.length;a.on(a.list[ki]);}else if(ev.key==='Enter'&&ki>=0){ev.preventDefault();a.open(a.list[ki],false);}else if(ev.key==='Escape'){a.off();}});
+  sv.addEventListener('blur',function(){if(bar.hidden&&bAll.getAttribute('aria-pressed')!=='true'){var a=sv.__api;if(a)a.off();}});
+ });
+})();
 })();
 
 /* ===== Sixth impression: navigator, search, theme, reading aids ===== */
@@ -10969,8 +11045,9 @@ function openNode(api,n,flipped){GO=[];var fig=api.fig,label=api.label(n),kt=key
   var rel=api.rel(n);
   var chips=rel.map(function(r){return {label:api.label(r.n).slice(0,46),why:r.why,col:VC[r.ty]||'#5fd0c6',go:function(){api.open(r.n,false);}};});
   var cardsM=relatedCards(kt,null,4),glossM=matchList(GLOSS,kt);
-  var lead=hot?esc(hot.d):(glossM[0]?esc(glossM[0].d):(cardsM[0]&&matchList([cardsM[0]],kt).length?esc(cardsM[0].d):(capS?'In this figure: '+esc(capS):'An element of Figure '+esc(fn)+(ft?', '+esc(ft):'')+'. Turn the card over to see what it connects to and where the text discusses it.')));
   var pass=passages(kt,fig,6);
+  var relS=rel.slice(0,3).map(function(r){return '“'+esc(api.label(r.n).split(' · ')[0].slice(0,40))+'” ('+esc(r.why)+')';}).join(', ');
+  var lead=hot?esc(hot.d):(glossM[0]?esc(glossM[0].d):(cardsM[0]&&matchList([cardsM[0]],kt).length?esc(cardsM[0].d):(capS?'In this figure: '+esc(capS):(pass[0]?snip(pass[0],kt):'Part of Figure '+esc(fn)+(ft?', '+esc(ft):'')+(relS?'. In the diagram it is tied to '+relS:'')+'.'))));
   var ctx=ctxHtml(pass[0],kt),terms=coTerms(pass,kt,10);
   var others=n.texts?n.texts.map(function(t){return clean(t.textContent);}).filter(function(s){return s&&s!==label;}):[];
   render({kind:'Figure '+fn+' · element',loc:ft,i:i,n:list.length,ctx:ctx,terms:terms,title:hot?hot.t:kt.label,sub:hot&&norm(hot.t)!==norm(kt.label)?'Labelled “'+kt.label+'” in the diagram':(others.length?others.slice(0,3).join(' · '):''),kt:kt,lead:lead,flipped:flipped,
@@ -11003,6 +11080,27 @@ function openCard(c,flipped){GO=[];var kt=keyTerms(c.t);var pass=passages(kt,c.e
     pass:passHtml(pass,kt),cards:cardsHtml(cs),figs:figsHtml(figs),gloss:'',
     step:function(d){var j=(i+d+deck.length)%deck.length;var cc=CARDS.filter(function(x){return x.el===deck[j];})[0];if(cc)openCard(cc,EC.classList.contains('flipped'));}});}
 
+
+/* ---------- 4. a whole figure ---------- */
+function openFigure(fig,api,flipped){GO=[];var fn=figNo(fig),ft=figTitle(fig),cap=capText(fig);var kt=keyTerms(ft||('Figure '+fn));
+  var refRx=new RegExp('\\b(fig(?:ure)?\\.?\\s*'+fn+')\\b','i');var IDX=N.idx(),refs=[];for(var i=0;i<IDX.length&&refs.length<6;i++){var u=IDX[i];if(u.type==='Text'&&refRx.test(u.text)&&!fig.contains(u.el))refs.push(u);}
+  var pass=refs.length?refs:passages(kt,fig,5);var sp=HOT[ft]||[];
+  var items=api.list.map(function(n,i){return {n:n,l:api.label(n)};});
+  var e=N.entryAt(fig);
+  render({kind:'Figure '+fn,loc:e?N.BSHORT[e.book]+' › '+(e.kick?e.kick+' · ':'')+e.title:'',title:ft||('Figure '+fn),sub:items.length+' elements · '+api.edges+' drawn connections',kt:kt,lead:esc(sentences(cap).slice(0,2).join(' ')),flipped:flipped,
+    facts:[sp.length+' annotated hotspot'+(sp.length===1?'':'s'),pass.length+' passage'+(pass.length===1?'':'s')+' in the text'].filter(function(x){return !/^0 /.test(x);}),
+    chipTitle:'Start with',chips:items.slice(0,5).map(function(x){return {label:x.l.slice(0,46),why:'open its card',col:'#e8b75c',go:function(){api.open(x.n,false);}};}),
+    ctx:'',terms:coTerms(pass,kt,8),
+    means:meansFrom([esc(cap)]),
+    relTitle:'Annotated hotspots',
+    rels:sp.length?'<ul class="ec-rels">'+sp.map(function(s){return '<li><button type="button" data-hs="'+esc(s.m)+'"><i style="background:#e8b75c"></i><b>'+esc(s.t)+'</b></button><span>'+esc(s.d)+'</span></li>';}).join('')+'</ul>':'',
+    pass:passHtml(pass,kt),
+    cards:'<ul class="ec-figs">'+items.map(function(x,i){return '<li><a href="#" data-el="'+i+'">'+esc(x.l.slice(0,90))+'</a></li>';}).join('')+'</ul>',
+    figs:figsHtml(relatedFigs(kt,fig,4)),gloss:''});
+  var cs=BK.querySelectorAll('.ec-sec h6');Array.prototype.forEach.call(cs,function(h){if(h.textContent==='Explainer cards on this')h.textContent='Every element (each opens its own card)';});
+  $$('[data-el]',EC).forEach(function(a){a.addEventListener('click',function(ev){ev.preventDefault();api.open(items[+a.getAttribute('data-el')].n,false);});});
+  $$('[data-hs]',EC).forEach(function(a){a.addEventListener('click',function(ev){ev.preventDefault();var m=a.getAttribute('data-hs');var hit=null;items.forEach(function(x){if(!hit&&x.l.indexOf(m)>=0)hit=x;});if(hit)api.open(hit.n,false);});});}
+
 /* ---------- wiring: deck cards get a "full explainer" button ---------- */
 CARDS.forEach(function(c){var bk=c.el.querySelector('.back');if(!bk||bk.querySelector('.fx'))return;var b=D.createElement('button');b.type='button';b.className='fx';b.textContent='Full explainer ↗';b.setAttribute('aria-label','Open the full explainer for '+c.t);
   b.addEventListener('click',function(ev){ev.stopPropagation();ev.preventDefault();openCard(c);});bk.appendChild(b);});
@@ -11032,7 +11130,7 @@ var qi=0;function pump(dl){while(qi<secs.length&&dl.timeRemaining()>4){linkSecti
 GLOSS.forEach(function(g){g.el.classList.add('ec-dt');g.el.setAttribute('tabindex','0');g.el.setAttribute('role','button');g.el.title='Open the explainer card';g.el.addEventListener('click',function(){openTerm(g.t);});g.el.addEventListener('keydown',function(ev){if(ev.key==='Enter'){openTerm(g.t);}});});
 
 $$('figure.fig').forEach(function(f){var c=f.querySelector('figcaption');if(!c||f.querySelector('.ec-hint'))return;var s=D.createElement('span');s.className='ec-hint';s.innerHTML='<b>Click or tap any part of the diagram</b> to open its explainer card: what it means, what it connects to, and where the text discusses it.';f.insertBefore(s,f.querySelector('.explorer')||c);});
-window.__ecard={node:openNode,term:openTerm,card:openCard,close:close,stats:function(){return {cards:CARDS.length,gloss:GLOSS.length,terms:tlist.length,linked:linked,sections:secs.length};},linkAll:function(){secs.forEach(linkSection);return linked;}};
+window.__ecard={figure:openFigure,node:openNode,term:openTerm,card:openCard,close:close,stats:function(){return {cards:CARDS.length,gloss:GLOSS.length,terms:tlist.length,linked:linked,sections:secs.length};},linkAll:function(){secs.forEach(linkSection);return linked;}};
 })();
 
 </script>
